@@ -204,13 +204,13 @@ pub fn compile(
             }
             Word::Proc(proc) => {
                 proc_key = *proc;
-                proc_start = offset;
+                proc_start = initial_offset + offset;
                 vtable_rec = Recording::Started;
             }
             Word::Ret => {
                 vtable_rec = Recording::Off;
                 vtable
-                    .insert(proc_key, (proc_start + 1, offset + 1))
+                    .insert(proc_key, (proc_start + 1, initial_offset + offset + 1))
                     .map_err(|_| CompileError::CodeMemoryOverflow)?;
             }
             _ => {}

@@ -1,6 +1,6 @@
 # Wire4
 
-Wire4(*Wire-Forth*) is a teeny-tiny, embeddable, Forth inspired virtual machine suitable for for `#![no_std]` environments.
+Wire4(*Wire-Forth*) is a teeny-tiny, embeddable, Forth inspired virtual machine suitable for `#![no_std]` environments.
 
 ## License
 

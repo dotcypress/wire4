@@ -9,7 +9,7 @@ mod vm;
 pub use compiler::*;
 pub use vm::*;
 
-pub type Prog = Vec<Word, consts::U256>;
+pub type Prog = Vec<Word, consts::U512>;
 pub type Stack = Vec<Value, consts::U32>;
 pub type ScopeStack = Vec<Scope, consts::U16>;
 pub type VTable = LinearMap<u32, (usize, usize), consts::U16>;
