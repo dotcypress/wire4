@@ -1,0 +1,16 @@
+[package]
+name = "wire4"
+version = "0.0.1"
+edition = "2018"
+license = "MIT/Apache-2.0"
+readme = "README.md"
+description = "Embeddable, Forth inspired virtual machine suitable for `#![no_std]` environments."
+categories = ["no-std"]
+keywords = ["vm", "forth"]
+documentation = "https://docs.rs/wire4"
+repository = "https://github.com/dotcypress/wire4"
+authors = ["Vitaly Domnikov <oss@vitaly.codes>"]
+
+[dependencies]
+heapless = "0.5.2"
+hash32 = "0.1.1"
