@@ -129,15 +129,15 @@ pub fn compile(
             "spaces" => code.push(Word::IO(IO::Spaces)),
             "bl" | "_" => code.push(Word::IO(IO::Space)),
             "clear" | "cls" => code.push(Word::IO(IO::Clear)),
-            "true" => code.push(Word::NumImm(-1)),
-            "false" => code.push(Word::NumImm(0)),
-            "on" => code.push(Word::NumImm(-1)),
-            "off" => code.push(Word::NumImm(0)),
-            "high" => code.push(Word::NumImm(-1)),
-            "low" => code.push(Word::NumImm(0)),
-            "pullup" => code.push(Word::NumImm(-1)),
-            "pulldown" => code.push(Word::NumImm(1)),
-            "floating" => code.push(Word::NumImm(0)),
+            "true" => code.push(Word::Num(-1)),
+            "false" => code.push(Word::Num(0)),
+            "on" => code.push(Word::Num(-1)),
+            "off" => code.push(Word::Num(0)),
+            "high" => code.push(Word::Num(-1)),
+            "low" => code.push(Word::Num(0)),
+            "pullup" => code.push(Word::Num(1)),
+            "pulldown" => code.push(Word::Num(-1)),
+            "floating" => code.push(Word::Num(0)),
             ":" => {
                 if proc_rec == Recording::Pending {
                     return Err(CompileError::InvalidProcName);
@@ -155,9 +155,9 @@ pub fn compile(
                 proc_rec = Recording::Off;
                 code.push(Word::Ret)
             }
-            token if token.starts_with('$') => code.push(Word::VarImm(hash_str(token))),
-            token if token.starts_with('#') => code.push(Word::NetImm(hash_str(token))),
-            token if token.starts_with('~') => code.push(Word::PortImm(hash_str(token))),
+            token if token.starts_with('$') => code.push(Word::Var(hash_str(token))),
+            token if token.starts_with('#') => code.push(Word::Net(hash_str(token))),
+            token if token.starts_with('~') => code.push(Word::Port(hash_str(token))),
             token if !token.starts_with('(') && !token.starts_with('\\') => {
                 let op = if token.starts_with('.') || token.starts_with('\"') {
                     let print_imm = token.starts_with(".\" ");
@@ -172,18 +172,21 @@ pub fn compile(
                         }
                         last = ch;
                     }
-                    let key = spool
-                        .store(&string.as_str().trim_start())
-                        .map_err(CompileError::SpoolError)?;
                     if print_imm {
-                        code.push(Word::StrImm(key))
+                        let key = spool
+                            .store(&string.as_str())
+                            .map_err(CompileError::SpoolError)?;
+                        code.push(Word::Str(key))
                             .map_err(|_| CompileError::CodeMemoryOverflow)?;
                         Word::IO(IO::PrintTop)
                     } else {
-                        Word::StrImm(key)
+                        let key = spool
+                            .store(&string.as_str().trim_start())
+                            .map_err(CompileError::SpoolError)?;
+                        Word::Str(key)
                     }
                 } else if let Ok(num) = token.parse::<i32>() {
-                    Word::NumImm(num)
+                    Word::Num(num)
                 } else {
                     Word::Call(hash_str(token))
                 };

@@ -64,14 +64,14 @@ pub enum IO {
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum Word {
-    NumImm(i32),
-    StrImm(u32),
-    VarImm(u32),
-    NetImm(u32),
-    PortImm(u32),
+    Num(i32),
+    Str(u32),
+    Var(u32),
     Proc(u32),
     Call(u32),
     IO(IO),
+    Net(u32),
+    Port(u32),
     Ret,
     Drop,
     Dup,

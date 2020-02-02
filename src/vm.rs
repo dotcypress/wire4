@@ -350,11 +350,11 @@ impl Wire4VM {
                         return Err(VMError::InvalidArguments(op));
                     }
                 }
-                Word::NumImm(num) => self.push(Value::Num(num as i32))?,
-                Word::PortImm(port) => self.push(Value::Port(port))?,
-                Word::NetImm(net) => self.push(Value::Net(net))?,
-                Word::StrImm(key) => self.push(Value::Str(key))?,
-                Word::VarImm(net) => self.push(Value::Var(net))?,
+                Word::Port(key) => self.push(Value::Port(key))?,
+                Word::Net(key) => self.push(Value::Net(key))?,
+                Word::Var(key) => self.push(Value::Var(key))?,
+                Word::Num(num) => self.push(Value::Num(num as i32))?,
+                Word::Str(key) => self.push(Value::Str(key))?,
                 Word::SetVar => {
                     if let Value::Var(var) = self.pop()? {
                         let val = self.pop()?;
