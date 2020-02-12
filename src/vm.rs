@@ -341,17 +341,25 @@ impl Wire4VM {
                 Word::Var(key) => self.push(Value::Var(key))?,
                 Word::Num(num) => self.push(Value::Num(num as i32))?,
                 Word::Str(key) => self.push(Value::Str(key))?,
-                Word::SetVar => {
+                Word::SaveVar => {
                     if let Value::Var(var) = self.pop()? {
                         return Ok(Some(VMRequest::SaveVar(var)));
                     } else {
                         return Err(VMError::InvalidArguments(op));
                     }
                 }
-                Word::GetVar => {
+                Word::LoadVar => {
                     if let Value::Var(var) = self.pop()? {
                         #[allow(mutable_borrow_reservation_conflict)]
                         return Ok(Some(VMRequest::LoadVar(var)));
+                    } else {
+                        return Err(VMError::InvalidArguments(op));
+                    }
+                }
+                Word::DeleteVar => {
+                    if let Value::Var(var) = self.pop()? {
+                        #[allow(mutable_borrow_reservation_conflict)]
+                        return Ok(Some(VMRequest::DeleteVar(var)));
                     } else {
                         return Err(VMError::InvalidArguments(op));
                     }

@@ -45,6 +45,7 @@ pub enum VMRequest {
     IO(IO),
     SaveVar(u32),
     LoadVar(u32),
+    DeleteVar(u32),
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -53,7 +54,6 @@ pub enum IO {
     PrintChar,
     PrintStack,
     PrintTop,
-    PrintVar,
     ReadChar,
     ReadVal,
     Space,
@@ -102,8 +102,9 @@ pub enum Word {
     NotEqZero,
     LtZero,
     GtZero,
-    SetVar,
-    GetVar,
+    SaveVar,
+    LoadVar,
+    DeleteVar,
     If,
     Then,
     Else,
