@@ -8,7 +8,6 @@ pub struct Wire4VM {
     stack: Stack,
     scope: ScopeStack,
     vtable: VTable,
-    vars: Vars,
     spool: Spool,
 }
 
@@ -41,7 +40,6 @@ impl Wire4VM {
             stack: Stack::new(),
             vtable: VTable::new(),
             scope: ScopeStack::new(),
-            vars: Vars::new(),
             spool: Spool::new(),
         }
     }
@@ -49,7 +47,6 @@ impl Wire4VM {
     pub fn reset(&mut self) {
         self.pc = 0;
         self.spool.clear();
-        self.vars.clear();
         self.code.clear();
         self.stack.clear();
         self.scope.clear();
@@ -60,17 +57,6 @@ impl Wire4VM {
         compile(prog, &mut self.code, &mut self.vtable, &mut self.spool)
             .map_err(VMError::CompileError)?;
         Ok(())
-    }
-
-    pub fn set_var(&mut self, key: u32, val: Value) -> Result<(), VMError> {
-        self.vars
-            .insert(key, val)
-            .map_err(|_| VMError::TooManyVars)?;
-        Ok(())
-    }
-
-    pub fn get_var(&self, key: u32) -> Option<&Value> {
-        self.vars.get(&key)
     }
 
     pub fn get_stack(&self) -> &Stack {
@@ -357,8 +343,7 @@ impl Wire4VM {
                 Word::Str(key) => self.push(Value::Str(key))?,
                 Word::SetVar => {
                     if let Value::Var(var) = self.pop()? {
-                        let val = self.pop()?;
-                        self.set_var(var, val)?;
+                        return Ok(Some(VMRequest::SaveVar(var)));
                     } else {
                         return Err(VMError::InvalidArguments(op));
                     }
@@ -366,10 +351,7 @@ impl Wire4VM {
                 Word::GetVar => {
                     if let Value::Var(var) = self.pop()? {
                         #[allow(mutable_borrow_reservation_conflict)]
-                        match self.get_var(var) {
-                            Some(val) => self.push(val.clone())?,
-                            None => return Err(VMError::UnknownVar),
-                        }
+                        return Ok(Some(VMRequest::LoadVar(var)));
                     } else {
                         return Err(VMError::InvalidArguments(op));
                     }

@@ -9,13 +9,12 @@ mod vm;
 pub use compiler::*;
 pub use vm::*;
 
+pub type String = heapless::String<consts::U12>;
 pub type Prog = Vec<Word, consts::U512>;
+pub type VTable = LinearMap<u32, (usize, usize), consts::U32>;
 pub type Stack = Vec<Value, consts::U32>;
 pub type ScopeStack = Vec<Scope, consts::U16>;
-pub type VTable = LinearMap<u32, (usize, usize), consts::U16>;
-pub type Vars = LinearMap<u32, Value, consts::U16>;
 pub type SpoolData = LinearMap<u32, String, consts::U32>;
-pub type String = heapless::String<consts::U12>;
 
 #[derive(Debug, PartialEq)]
 pub enum VMError {
@@ -25,7 +24,6 @@ pub enum VMError {
     DivisionByZero,
     StackOverflow,
     StackUnderflow,
-    UnknownVar,
     InvalidScope,
     InvalidPtr,
     TooManyVars,
@@ -45,6 +43,8 @@ pub enum VMRequest {
     Idle,
     CallProc(u32),
     IO(IO),
+    SaveVar(u32),
+    LoadVar(u32),
 }
 
 #[derive(Debug, PartialEq, Clone)]
