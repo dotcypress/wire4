@@ -8,6 +8,7 @@ mod vm;
 
 pub use compiler::*;
 pub use vm::*;
+pub use spool::*;
 
 pub type String = heapless::String<consts::U12>;
 pub type Prog = Vec<Word, consts::U512>;
@@ -20,6 +21,7 @@ pub type SpoolData = LinearMap<u32, String, consts::U32>;
 pub enum VMError {
     CompileError(CompileError),
     InvalidArguments(Word),
+    SpoolError(SpoolError),
     ProgramHalted,
     DivisionByZero,
     StackOverflow,
@@ -43,8 +45,9 @@ pub enum VMRequest {
     Idle,
     CallProc(u32),
     IO(IO),
-    SaveVar(u32),
-    LoadVar(u32),
+    StoreVar(u32, Value),
+    TestVar(u32),
+    FetchVar(u32),
     DeleteVar(u32),
 }
 
@@ -102,8 +105,9 @@ pub enum Word {
     NotEqZero,
     LtZero,
     GtZero,
-    SaveVar,
-    LoadVar,
+    TestVar,
+    StoreVar,
+    FetchVar,
     DeleteVar,
     If,
     Then,

@@ -63,6 +63,10 @@ impl Wire4VM {
         &self.stack
     }
 
+    pub fn intern_string(&mut self, s: &str) -> Result<u32, VMError> {
+        self.spool.store(s).map_err(VMError::SpoolError)
+    }
+
     pub fn get_string(&self, key: u32) -> Option<&String> {
         self.spool.load(key)
     }
@@ -341,17 +345,25 @@ impl Wire4VM {
                 Word::Var(key) => self.push(Value::Var(key))?,
                 Word::Num(num) => self.push(Value::Num(num as i32))?,
                 Word::Str(key) => self.push(Value::Str(key))?,
-                Word::SaveVar => {
-                    if let Value::Var(var) = self.pop()? {
-                        return Ok(Some(VMRequest::SaveVar(var)));
+                Word::StoreVar => {
+                    if let (Value::Var(var), val) = (self.pop()?, self.pop()?) {
+                        return Ok(Some(VMRequest::StoreVar(var, val)));
                     } else {
                         return Err(VMError::InvalidArguments(op));
                     }
                 }
-                Word::LoadVar => {
+                Word::FetchVar => {
                     if let Value::Var(var) = self.pop()? {
                         #[allow(mutable_borrow_reservation_conflict)]
-                        return Ok(Some(VMRequest::LoadVar(var)));
+                        return Ok(Some(VMRequest::FetchVar(var)));
+                    } else {
+                        return Err(VMError::InvalidArguments(op));
+                    }
+                }
+                Word::TestVar => {
+                    if let Value::Var(var) = self.pop()? {
+                        #[allow(mutable_borrow_reservation_conflict)]
+                        return Ok(Some(VMRequest::TestVar(var)));
                     } else {
                         return Err(VMError::InvalidArguments(op));
                     }
