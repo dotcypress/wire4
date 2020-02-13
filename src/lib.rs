@@ -7,8 +7,8 @@ pub mod spool;
 mod vm;
 
 pub use compiler::*;
-pub use vm::*;
 pub use spool::*;
+pub use vm::*;
 
 pub type String = heapless::String<consts::U12>;
 pub type Prog = Vec<Word, consts::U512>;
@@ -125,10 +125,14 @@ pub fn hash_str(string: &str) -> u32 {
     hasher.finish()
 }
 
-pub fn bool_enc(val: bool) -> i32 {
+pub fn encode_bool(val: bool) -> i32 {
     if val {
         -1
     } else {
         0
     }
+}
+
+pub fn decode_bool(val: i32) -> bool {
+    val == -1
 }

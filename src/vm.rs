@@ -283,11 +283,11 @@ impl Wire4VM {
                         let num = match op {
                             Word::Inc => num.saturating_add(1),
                             Word::Dec => num.saturating_sub(1),
-                            Word::EqZero => bool_enc(num == 0),
-                            Word::LtZero => bool_enc(num < 0),
-                            Word::GtZero => bool_enc(num > 0),
-                            Word::NotEqZero => bool_enc(num != 0),
-                            Word::Invert => bool_enc(num == 0),
+                            Word::EqZero => encode_bool(num == 0),
+                            Word::LtZero => encode_bool(num < 0),
+                            Word::GtZero => encode_bool(num > 0),
+                            Word::NotEqZero => encode_bool(num != 0),
+                            Word::Invert => encode_bool(num == 0),
                             _ => unreachable!(),
                         };
                         self.push(Value::Num(num))?;
@@ -327,12 +327,12 @@ impl Wire4VM {
                             Word::Mod => a % b,
                             Word::Or => a | b,
                             Word::Xor => a ^ b,
-                            Word::Lt => bool_enc(a < b),
-                            Word::Gt => bool_enc(a > b),
-                            Word::Lte => bool_enc(a <= b),
-                            Word::Gte => bool_enc(a >= b),
-                            Word::Eq => bool_enc(a == b),
-                            Word::NotEq => bool_enc(a != b),
+                            Word::Lt => encode_bool(a < b),
+                            Word::Gt => encode_bool(a > b),
+                            Word::Lte => encode_bool(a <= b),
+                            Word::Gte => encode_bool(a >= b),
+                            Word::Eq => encode_bool(a == b),
+                            Word::NotEq => encode_bool(a != b),
                             _ => unreachable!(),
                         };
                         self.push(Value::Num(num))?;
