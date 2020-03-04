@@ -130,15 +130,14 @@ pub fn compile(
             "@" | "fetch" => code.push(Word::FetchVar),
             "?" | "test" => code.push(Word::TestVar),
             "del" => code.push(Word::DeleteVar),
-            "true" => code.push(Word::Num(-1)),
-            "false" => code.push(Word::Num(0)),
-            "on" => code.push(Word::Num(-1)),
-            "off" => code.push(Word::Num(0)),
-            "high" => code.push(Word::Num(-1)),
-            "low" => code.push(Word::Num(0)),
-            "pullup" => code.push(Word::Num(1)),
-            "pulldown" => code.push(Word::Num(-1)),
-            "floating" => code.push(Word::Num(0)),
+            "true" | "on" | "high" => code.push(Word::Num(-1)),
+            "false" | "off" | "low" => code.push(Word::Num(0)),
+            "reset" => code.push(Word::Reset),
+            "adc" => code.push(Word::ADC),
+            "dac" => code.push(Word::DAC),
+            "wire" => code.push(Word::Wire),
+            "wires" => code.push(Word::ListWires),
+            "unwire" => code.push(Word::Unwire),
             ":" => {
                 if proc_rec == Recording::Pending {
                     return Err(CompileError::InvalidProcName);

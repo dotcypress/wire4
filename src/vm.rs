@@ -345,6 +345,28 @@ impl Wire4VM {
                 Word::Var(key) => self.push(Value::Var(key))?,
                 Word::Num(num) => self.push(Value::Num(num as i32))?,
                 Word::Str(key) => self.push(Value::Str(key))?,
+                Word::Reset => {
+                    return Ok(Some(VMRequest::Reset));
+                }
+                Word::Wire => {
+                    return Ok(Some(VMRequest::Wire));
+                }
+                Word::ListWires => {
+                    return Ok(Some(VMRequest::ListWires));
+                }
+                Word::Unwire => {
+                    return Ok(Some(VMRequest::Unwire));
+                }
+                Word::ADC => {
+                    return Ok(Some(VMRequest::ADC));
+                }
+                Word::DAC => {
+                    if let Value::Num(val) = self.pop()? {
+                        return Ok(Some(VMRequest::DAC(val)));
+                    } else {
+                        return Err(VMError::InvalidArguments(op));
+                    }
+                }
                 Word::StoreVar => {
                     if let (Value::Var(var), val) = (self.pop()?, self.pop()?) {
                         return Ok(Some(VMRequest::StoreVar(var, val)));
