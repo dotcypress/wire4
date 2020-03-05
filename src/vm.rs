@@ -357,16 +357,6 @@ impl Wire4VM {
                 Word::Unwire => {
                     return Ok(Some(VMRequest::Unwire));
                 }
-                Word::ADC => {
-                    return Ok(Some(VMRequest::ADC));
-                }
-                Word::DAC => {
-                    if let Value::Num(val) = self.pop()? {
-                        return Ok(Some(VMRequest::DAC(val)));
-                    } else {
-                        return Err(VMError::InvalidArguments(op));
-                    }
-                }
                 Word::StoreVar => {
                     if let (Value::Var(var), val) = (self.pop()?, self.pop()?) {
                         return Ok(Some(VMRequest::StoreVar(var, val)));
